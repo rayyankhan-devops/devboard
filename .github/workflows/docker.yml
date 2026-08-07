@@ -34,3 +34,8 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/devboard-backend:${{ github.sha }}
+
+  deploy:
+    needs: [docker-build-and-push]
+    uses: ./.github/workflows/docker.yml
+    secrets: inherit
