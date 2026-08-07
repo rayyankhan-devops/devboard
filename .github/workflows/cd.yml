@@ -44,6 +44,4 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Deploy the containers with Docker Compose
-        run: |
-          docker compose pull
-          docker compose up -d
+        run: docker compose up -d
