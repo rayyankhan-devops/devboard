@@ -25,7 +25,7 @@ jobs:
 
       - name: Install Docker Compose Plugin (if not installed)
         run: |
-          if ! docker compose version >/dev/null 2>&1; then
+          if ! sudo docker compose version >/dev/null 2>&1; then
             sudo mkdir -p /usr/local/lib/docker/cli-plugins
 
             sudo curl -SL \
@@ -35,7 +35,7 @@ jobs:
             sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
           fi
 
-          docker compose version
+          sudo docker compose version
 
       - name: Docker Setup [Login]
         uses: docker/login-action@v4
@@ -44,4 +44,4 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Deploy the containers with Docker Compose
-        run: docker compose up -d
+        run: sudo docker compose up -d
