@@ -11,8 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['22' , '20' , '19']
-        go-version: ['1.24', '1.25', '1.26']
+        node-version: ['20', '22', '24']
     steps:
       - name: cloning code
         uses: actions/checkout@v4
@@ -40,6 +39,9 @@ jobs:
           
   install-and-test-backend:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: ['1.24', '1.25']
     needs: install-and-test-frontend
     steps:
       - name: cloning code
