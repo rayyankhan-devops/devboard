@@ -2,28 +2,29 @@ name: devboard CI
 
 on:
   schedule:
-    - cron: '*/10 * * * *' # Runs every day at midnight
+    - cron: '*/10 * * * *'
   workflow_dispatch:
 
 jobs:
   install-and-test-frontend:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         node-version: ['20', '22', '24']
+
     steps:
-      - name: cloning code
+      - name: Checkout code
         uses: actions/checkout@v4
-        
-      - name: setup node
+
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-          cache-dependency-path: |
-            frontend/package-lock.json
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
-      - name: Install deps
+      - name: Install dependencies
         run: npm ci
         working-directory: frontend
 
@@ -35,37 +36,42 @@ jobs:
         run: npm test
         working-directory: frontend
 
-          
   install-and-test-backend:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         go-version: ['1.24', '1.25']
+
     needs: install-and-test-frontend
+
     steps:
-      - name: cloning code
+      - name: Checkout code
         uses: actions/checkout@v4
-        
-      - name: setup go
+
+      - name: Setup Go
         uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
           cache: true
-      
-      - name: Install deps
+          cache-dependency-path: backend/go.sum
+
+      - name: Install dependencies
         run: go mod download
         working-directory: backend
-    
-      - name: Install vet
-        run: go vet
+
+      - name: Run go vet
+        run: go vet ./...
         working-directory: backend
-        
+
       - name: Run tests
         run: go test -v ./...
         working-directory: backend
 
   docker:
-    needs: [install-and-test-frontend,install-and-test-backend]
+    needs:
+      - install-and-test-frontend
+      - install-and-test-backend
+
     uses: ./.github/workflows/docker.yml
     secrets: inherit
-    
