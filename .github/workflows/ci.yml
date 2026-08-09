@@ -9,6 +9,10 @@ on:
 jobs:
   install-and-test-frontend:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['22' , '20' , '19']
+        go-version: ['1.24', '1.25', '1.26']
     steps:
       - name: cloning code
         uses: actions/checkout@v4
@@ -16,7 +20,7 @@ jobs:
       - name: setup node
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: ${{ matrix.node-version }}
           cache: 'npm'
           cache-dependency-path: |
             frontend/package-lock.json
@@ -44,7 +48,7 @@ jobs:
       - name: setup go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.22"
+          go-version: ${{ matrix.go-version }}
           cache: true
       
       - name: Install deps

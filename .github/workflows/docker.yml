@@ -6,7 +6,11 @@ on:
 jobs:
   docker-build-and-push:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        dockerfile-path: ['./frontend/Dockerfile', './backend/Dockerfile']
+        context-path: ['./frontend', './backend']
+        image-name: ['devboard-frontend', 'devboard-backend']
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -17,25 +21,13 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build & Push Frontend
+      - name: Build & Push Docker Images
         uses: docker/build-push-action@v6
         with:
-          context: ./frontend
-          file: ./frontend/Dockerfile
+          context: ${{ matrix.context-path }}
+          file: ${{ matrix.dockerfile-path }}
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/devboard-frontend:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/${{ matrix.image-name }}:${{ github.sha }}
 
-      - name: Build & Push Backend
-        uses: docker/build-push-action@v6
-        with:
-          context: ./backend
-          file: ./backend/Dockerfile
-          push: true
-          tags: |
-            ${{ secrets.DOCKER_USERNAME }}/devboard-backend:${{ github.sha }}
-
-  deploy:
-    needs: [docker-build-and-push]
-    uses: ./.github/workflows/cd.yml
-    secrets: inherit
+   
