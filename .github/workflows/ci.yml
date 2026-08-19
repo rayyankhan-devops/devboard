@@ -1,7 +1,6 @@
 name: devboard CI
 
-on:
-  workflow_dispatch:
+on: push
 
 jobs:
   install-and-test-frontend:

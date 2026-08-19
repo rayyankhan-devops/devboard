@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devboard-be-deployment
+  namespace: devboard
+  labels:
+    app: devboard-be
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devboard-be
+  template:
+    metadata:
+      labels:
+        app: devboard-be
+    spec:
+      containers:
+      - name: devboard-be
+        image: rayyan12311/devboard-backend:8a526a6674d8f01b148aab0f371757fa952dc251
+        ports:
+        - containerPort: 8081
+        envFrom:
+        - configMapRef:
+            name: backend-configmap

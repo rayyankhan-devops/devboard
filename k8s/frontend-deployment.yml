@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devboard-fe-deployment
+  namespace: devboard
+  labels:
+    app: devboard-fe
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devboard-fe
+  template:
+    metadata:
+      labels:
+        app: devboard-fe
+    spec:
+      containers:
+      - name: devboard-fe
+        image: rayyan12311/devboard-frontend:8a526a6674d8f01b148aab0f371757fa952dc251
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: default.conf
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: frontend-nginx-config
